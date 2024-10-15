@@ -8,5 +8,6 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Home::index');
 
 $routes->group('api', function($routes) {
-    $routes->get('users', 'api\UserController::index');
+    #Dashboard
+    $routes->get('dashboard', 'api\Dashboard::index');
 });
