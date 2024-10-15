@@ -7,7 +7,7 @@ use CodeIgniter\HTTP\ResponseInterface;
 
 class Dashboard extends BaseController{
     
-    public function index(){
+    public function view(){
         return view('Dashboard/Templeate/index').view('Dashboard/Templeate/aside').view('Dashboard/Templeate/main').view('Dashboard/Templeate/footer');
     }
 }
