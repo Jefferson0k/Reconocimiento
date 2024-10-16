@@ -70,8 +70,8 @@
     <div class="layout-wrapper layout-content-navbar">
       <div class="layout-container">
         <!-- Menu -->
-<!-- Layout container -->
-<div class="layout-page">
+        <!-- Layout container -->
+        <div class="layout-page">
           <!-- Navbar -->
 
           <nav
@@ -101,17 +101,6 @@
 
               <ul class="navbar-nav flex-row align-items-center ms-auto">
                 <!-- Place this tag where you want the button to render. -->
-                <li class="nav-item lh-1 me-3">
-                  <a
-                    class="github-button"
-                    href="https://github.com/themeselection/sneat-html-admin-template-free"
-                    data-icon="octicon-star"
-                    data-size="large"
-                    data-show-count="true"
-                    aria-label="Star themeselection/sneat-html-admin-template-free on GitHub"
-                    >Star</a
-                  >
-                </li>
 
                 <!-- User -->
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
@@ -129,9 +118,46 @@
                               <img src="<?= base_url('templeate/assets/img/avatars/1.png') ?>" alt class="w-px-40 h-auto rounded-circle" />
                             </div>
                           </div>
+                          <?php
+                            use App\Models\CargoModelo;
+                            $session = \Config\Services::session();
+                            if ($session->has('usuario')) {
+                                // Carga el modelo de Cargo
+                                $cargoModel = new CargoModelo();
+
+                                // Obtiene los datos de la sesión
+                                $iduser = $session->get('iduser');
+                                $Usuario = $session->get('usuario');
+                                $nombreCompleto  = $session->get('Nombre');
+                                $apellidos = $session->get('NomApell');
+                                $cargoId = $session->get('Cargo');
+
+                                // Obtiene el nombre del cargo usando el modelo
+                                $cargoNombre = '';
+                                if (!empty($cargoId)) {
+                                    $cargoNombre = $cargoModel->getNombreById($cargoId);
+                                }
+
+                                // Procesar el nombre del usuario
+                                $nombreFormateado = '';
+                                if (!empty($nombreCompleto)) {
+                                    $partesNombre = explode(' ', $nombreCompleto);
+                                    if (count($partesNombre) >= 3) {
+                                        $inicialPrimerNombre = substr($partesNombre[2], 0, 1) . '.';
+                                        $apellidoCompleto = end($partesNombre);
+                                        $nombreFormateado = $inicialPrimerNombre . ' ' . strtoupper($apellidoCompleto);
+                                    } else {
+                                        // Manejar la situación donde $nombreCompleto no tiene suficientes partes
+                                        $nombreFormateado = $nombreCompleto; // O asignar un valor predeterminado
+                                    }
+                                }
+
+                                // Renderizar el perfil del usuario
+                          ?>
+
                           <div class="flex-grow-1">
-                            <span class="fw-semibold d-block">John Doe</span>
-                            <small class="text-muted">Admin</small>
+                            <span class="fw-semibold d-block"><?php echo $nombreCompleto; ?></span>
+                            <small class="text-muted"><?php echo $cargoNombre; ?></small>
                           </div>
                         </div>
                       </a>
@@ -140,37 +166,23 @@
                       <div class="dropdown-divider"></div>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="#">
+                      <a class="dropdown-item" href="<?= base_url('api/Perfil/vista') ?>">
                         <i class="bx bx-user me-2"></i>
                         <span class="align-middle">My Profile</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#">
-                        <i class="bx bx-cog me-2"></i>
-                        <span class="align-middle">Settings</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#">
-                        <span class="d-flex align-items-center align-middle">
-                          <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
-                          <span class="flex-grow-1 align-middle">Billing</span>
-                          <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
-                        </span>
                       </a>
                     </li>
                     <li>
                       <div class="dropdown-divider"></div>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="auth-login-basic.html">
+                      <a class="dropdown-item" href="<?= base_url('/Login/cerrarsesion') ?>">
                         <i class="bx bx-power-off me-2"></i>
                         <span class="align-middle">Log Out</span>
                       </a>
                     </li>
                   </ul>
                 </li>
+                <?php } ?>
                 <!--/ User -->
               </ul>
             </div>
