@@ -4,15 +4,14 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class ModelsLocal extends Model
-{
-    protected $table            = 'local';
+class ModeloLogin extends Model{
+    protected $table            = 'modelologins';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['nombre','direccion','id_user','estado','created_at','updated_at','deleted_at','deleted_by','updated_by'];
+    protected $allowedFields    = [];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -43,4 +42,33 @@ class ModelsLocal extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+    public function paginas($data){
+        $db = \Config\Database::connect();
+        $qry = 'CALL sp_listar_accesos(?)';
+        $result = $db->query($qry, $data);
+        $db->close();
+        $data = $result->getResultArray();
+        $lista = array();
+        foreach ($data as $obj) {
+            $controller = $obj['v2'];
+            $isApi = $obj['v3'];
+            if ($isApi == 1) {
+                $lista[] = strtoupper('\APP\CONTROLLERS\API' . '\\' . $controller);
+            } else {
+                $lista[] = strtoupper('\APP\CONTROLLERS' . '\\' . $controller);
+            }
+        }
+        return $lista;
+    }
+    public function login($user, $pass){
+        $db = \Config\Database::connect();
+        $qry = 'CALL sp_validarUsuario(?,?)'; 
+        $result = $db->query($qry, [$user, $pass]);
+        $db->close();
+        return $result->getRow();
+    }
+    public function getUserById($userId)
+    {
+        return $this->where('id', $userId)->first();
+    }
 }

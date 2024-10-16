@@ -4,9 +4,9 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class ModelsTrabajador extends Model
+class ReconocimientoModelo extends Model
 {
-    protected $table            = 'modelstrabajadors';
+    protected $table            = 'reconocimientomodelos';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';

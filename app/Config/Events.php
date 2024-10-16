@@ -53,3 +53,36 @@ Events::on('pre_system', static function (): void {
         }
     }
 });
+Events::on('post_controller_constructor', function(){
+    $router = service('router');
+    $class = strtoupper($router->controllerName());
+    $method = strtoupper($router->methodName());
+    $session = \Config\Services::session(); 
+    $nocontrolados = array('\APP\CONTROLLERS\CONTROLLOGIN', '\APP\CONTROLLERS\LOGIN', '\APP\CONTROLLERS\ERRORACCESO');
+
+    // Verificar si la clase actual está en la lista de no controlados
+    if (!in_array($class, $nocontrolados)){
+        if(!$session->has('usuario')){
+            // Redirigir al login si no hay usuario en la sesión
+            $jus = base_url('/Login/index');
+            header('Location: '.$jus);
+            exit();
+        } else {
+            // Obtener las páginas permitidas desde la sesión
+            $paginas = $session->get('paginas');  
+
+            // Asegurarse de que $paginas sea un array
+            if (!is_array($paginas)) {
+                $paginas = array(); // Inicializar como array vacío si no lo es
+            }
+
+            // Verificar si la combinación de clase y método está en las páginas permitidas
+            if (!in_array($class.$method, $paginas)) {    
+                // Redirigir a una página de error de acceso si no está permitido
+                $jus = base_url('/ErrorAcceso/index');
+                header('Location: '.$jus);
+                exit(); 
+            }
+        }
+    }
+});
