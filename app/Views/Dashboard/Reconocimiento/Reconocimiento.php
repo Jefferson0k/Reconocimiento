@@ -3,132 +3,174 @@ $Sucursal = $Sucursal ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
-    <title>Dashboard - NiceAdmin Bootstrap Template</title>
-    <meta content="" name="description">
-    <meta content="" name="keywords">
-
+    <title>Attendance Control | Face Recognition</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Favicons -->
-    <link href="<?= base_url('Plantilla/assets/img/favicon.png') ?>" rel="icon">
-    <link href="<?= base_url('Plantilla/assets/img/apple-touch-icon.png') ?>" rel="apple-touch-icon">
+
+    <!-- Modern CSS Framework -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    
+    <!-- Modern Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="<?= base_url('js/jsReconocimiento.js') ?>"></script>
     <script src="<?= base_url('Reconocimiento/face-api.min.js') ?>"></script>
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
-        rel="stylesheet">
-
-    <!-- Vendor CSS Files -->
-    <link href="<?= base_url('Plantilla/assets/vendor/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('Plantilla/assets/vendor/bootstrap-icons/bootstrap-icons.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('Plantilla/assets/vendor/boxicons/css/boxicons.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('Plantilla/assets/vendor/quill/quill.snow.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('Plantilla/assets/vendor/quill/quill.bubble.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('Plantilla/assets/vendor/remixicon/remixicon.css') ?>" rel="stylesheet">
-
-    <!-- Template Main CSS File -->
-    <link href="<?= base_url('Plantilla/assets/css/style.css') ?>" rel="stylesheet">
-    <!-- Estilos de Face Api --->
-    <link href="<?= base_url('Reconocimiento/EstilosF.css') ?>" rel="stylesheet">
-    <script src="<?= base_url('js/jsReconocimiento.js') ?>"></script>
-
+    <!-- Custom Styles -->
+    <style>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .video-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .recording-indicator {
+            animation: pulse 2s infinite;
+        }
+    </style>
 </head>
 
-<body>
+<body class="bg-gradient-to-br from-blue-100 to-indigo-200 min-h-screen">
+    <!-- Modern Header -->
+    <header class="glass-effect fixed w-full top-0 z-50">
+        <nav class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                </div>
+                
+                <!-- User Profile -->
+                <?php
+                $session = \Config\Services::session();
+                if ($session->has('usuario')) {
+                    // Obtener datos de la sesión
+                    $nombreCompleto = $session->get('Nombre');
+                    $cargoId = $session->get('Cargo');
+                    
+                    // Cargar el modelo de Cargo
+                    $cargoModel = new \App\Models\CargoModelo();
+                    $cargoNombre = $cargoModel->getNombreById($cargoId);
+                    
+                    // Formatear el nombre
+                    $partesNombre = explode(' ', $nombreCompleto);
+                    if (count($partesNombre) >= 3) {
+                        $inicialPrimerNombre = substr($partesNombre[2], 0, 1) . '.';
+                        $apellidoCompleto = end($partesNombre);
+                        $nombreFormateado = $inicialPrimerNombre . ' ' . strtoupper($apellidoCompleto);
+                    } else {
+                        $nombreFormateado = $nombreCompleto;
+                    }
+                ?>
+                <div class="relative" id="profileDropdown">
+                    <button 
+                        class="flex items-center space-x-3 glass-effect px-4 py-2 rounded-lg hover:bg-white/30 transition"
+                        onclick="toggleDropdown()"
+                    >
+                        <div class="text-left hidden md:block">
+                            <p class="text-sm font-semibold text-gray-800"><?= esc($nombreFormateado) ?></p>
+                            <p class="text-xs text-gray-600"><?= esc($cargoNombre) ?></p>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-600 text-sm transition-transform duration-200" id="dropdownIcon"></i>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 glass-effect rounded-lg shadow-lg hidden transition-all duration-200 transform opacity-0">
+                        <a href="<?= base_url('/Login/cerrarsesion') ?>" 
+                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-white/30 rounded-lg transition">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Sign Out
+                        </a>
+                    </div>
+                </div>
+                <?php } else { ?>
+                <div class="relative">
+                    <a href="<?= base_url('/Login') ?>" 
+                       class="glass-effect px-4 py-2 rounded-lg hover:bg-white/30 transition">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Login
+                    </a>
+                </div>
+                <?php } ?>
+            </div>
+        </nav>
+    </header>
 
-    <!-- ======= Header ======= -->
-    <header id="header" class="header fixed-top d-flex align-items-center">
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 pt-24 pb-12">
+    <div class="max-w-4xl mx-auto">
+        <!-- Video Container -->
+        <div class="video-container bg-white p-4">
+            <div class="relative">
+                <!-- Video Element -->
+                <video id="video" width="720" height="560" class="w-full h-auto rounded-lg shadow-lg" autoplay muted></video>
 
-        <div class="d-flex align-items-center justify-content-between">
-            <a href="<?= base_url('/api/Asistencia') ?>" class="logo d-flex align-items-center">
-                <img src="<?= base_url('Plantilla/assets/img/logo.png') ?>" alt="">
-                <span class="d-none d-lg-block">Facial Recognition</span>
-            </a>
-        </div><!-- End Logo -->
+                <!-- Canvas for FaceAPI -->
+                <canvas id="overlay" class="absolute top-0 left-0 w-full h-full"></canvas>
+                
+                <!-- Recording Indicator -->
+                <div class="absolute top-4 right-4 flex items-center space-x-2 glass-effect px-3 py-1 rounded-full">
+                    <div class="recording-indicator w-3 h-3 bg-red-500 rounded-full"></div>
+                    <span class="text-sm text-gray-800">Recording</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 
-        <nav class="header-nav ms-auto">
-            <ul class="d-flex align-items-center">
-                <li class="nav-item dropdown pe-3">
-                    <?php
-                        use App\Models\CargoModelo;
-                        $session = \Config\Services::session(); 
-                        if ($session->has('usuario')) {
-                            // Carga el modelo de Cargo
-                            $cargoModel = new CargoModelo();
-                            // Obtiene los datos de la sesión
-                            $iduser = $session->get('iduser');
-                            $Usuario = $session->get('usuario');
-                            $nombreCompleto  = $session->get('Nombre');
-                            $apellidos = $session->get('NomApell');
-                            $cargoId = $session->get('Cargo');
-                            // Obtiene el nombre del cargo usando el modelo
-                            $cargoNombre = $cargoModel->getNombreById($cargoId);                            
-                            // Procesar el nombre del usuario
-                            $partesNombre = explode(' ', $nombreCompleto);
 
-                            if (count($partesNombre) >= 3) {
-                                $inicialPrimerNombre = substr($partesNombre[2], 0, 1) . '.';
-                                $apellidoCompleto = end($partesNombre);
-                                $nombreFormateado = $inicialPrimerNombre . ' ' . strtoupper($apellidoCompleto);
-                            } else {
-                                // Manejar el caso cuando no hay suficientes partes en el nombre
-                                $nombreFormateado = $nombreCompleto; // O cualquier valor predeterminado
-                            }
-                    ?>
-                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                    <img src="<?= base_url('Perfil/Sucursal/Swiss_pharmacy_logo_(old).svg.png') ?>" alt="Profile"
-                    class="rounded-circle">
-                        <span class="d-none d-md-block dropdown-toggle ps-2"><?php echo $nombreFormateado; ?></span>
-                    </a><!-- End Profile Iamge Icon -->
-
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                        <li class="dropdown-header">
-                            <h6><?php echo $nombreCompleto; ?></h6>
-                            <span><?php echo $cargoNombre; ?></span>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center"
-                                href="<?= base_url('/Login/cerrarsesion') ?>">
-                                <i class="bi bi-box-arrow-right"></i>
-                                <span>Sign Out</span>
-                            </a>
-                        </li>
-                    </ul>
-                    <?php } ?>
-                </li>
-            </ul>
-        </nav><!-- End Icons Navigation -->
-
-    </header><!-- End Header -->
-
-    <video id="video" width="720" height="560" autoplay muted></video>
-
-    <!-- Vendor JS Files -->
-    <script src="<?= base_url('Plantilla/assets/vendor/apexcharts/apexcharts.min.js') ?>"></script>
-    <script src="<?= base_url('Plantilla/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
-    <script src="<?= base_url('Plantilla/assets/vendor/chart.js/chart.umd.js') ?>"></script>
-    <script src="<?= base_url('Plantilla/assets/vendor/echarts/echarts.min.js') ?>"></script>
-    <script src="<?= base_url('Plantilla/assets/vendor/quill/quill.min.js') ?>"></script>
-    <script src="<?= base_url('Plantilla/assets/vendor/tinymce/tinymce.min.js') ?>"></script>
-    <script src="<?= base_url('Plantilla/assets/vendor/php-email-form/validate.js') ?>"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <!-- Template Main JS File -->
+    <!-- Scripts -->
 </body>
-
 </html>
+<script>
+    function toggleDropdown() {
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const dropdownIcon = document.getElementById('dropdownIcon');
+        // Toggle classes for animation
+        if (dropdownMenu.classList.contains('hidden')) {
+            // Show menu
+            dropdownMenu.classList.remove('hidden');
+            setTimeout(() => {
+                dropdownMenu.classList.remove('opacity-0');
+                dropdownMenu.classList.add('opacity-100');
+                dropdownIcon.classList.add('rotate-180');
+            }, 20);
+        } else {
+            // Hide menu
+            dropdownMenu.classList.remove('opacity-100');
+            dropdownMenu.classList.add('opacity-0');
+            dropdownIcon.classList.remove('rotate-180');
+            setTimeout(() => {
+                dropdownMenu.classList.add('hidden');
+            }, 200);
+        }
+    }
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('profileDropdown');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const dropdownIcon = document.getElementById('dropdownIcon');
+        if (!dropdown.contains(event.target) && !dropdownMenu.classList.contains('hidden')) {
+            dropdownMenu.classList.remove('opacity-100');
+            dropdownMenu.classList.add('opacity-0');
+            dropdownIcon.classList.remove('rotate-180');
+            setTimeout(() => {
+                dropdownMenu.classList.add('hidden');
+            }, 200);
+        }
+    });
+</script>
 <script>
 const video = document.getElementById('video');
 let recognition; // Variable para el objeto de reconocimiento de voz
@@ -189,23 +231,34 @@ function startVideo() {
 }
 
 video.addEventListener('play', async () => {
-    const canvas = faceapi.createCanvasFromMedia(video);
-    document.body.append(canvas);
+    const canvas = document.getElementById('overlay');
+    
+    // Ajustar el tamaño del canvas al tamaño del video
+    canvas.width = video.offsetWidth;
+    canvas.height = video.offsetHeight;
+
     const displaySize = {
-        width: video.width,
-        height: video.height
+        width: video.offsetWidth,  // Usar las dimensiones del video del HTML
+        height: video.offsetHeight // Usar las dimensiones del video del HTML
     };
+
     faceapi.matchDimensions(canvas, displaySize);
+
     setInterval(async () => {
-        const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
+        const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+            .withFaceLandmarks()
+            .withFaceExpressions();
+
         const resizedDetections = faceapi.resizeResults(detections, displaySize);
+
+        // Limpiar el canvas y dibujar las detecciones sobre el video
         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
         faceapi.draw.drawDetections(canvas, resizedDetections);
         faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
         faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
     }, 100);
 
-    // faltaria ajustar el umbral de confianza 
+    // Procesar las referencias de los rostros
     for (const referencia of referencias2) {
         const referenciaImg = new Image();
         referenciaImg.src = referencia.ruta;
@@ -215,13 +268,13 @@ video.addEventListener('play', async () => {
         try {
             const referenciaDetections = await faceapi.detectSingleFace(referenciaImg).withFaceLandmarks().withFaceDescriptor();
             referencia.descriptor = referenciaDetections?.descriptor;
-            // retorna los puntos del rostro
             console.log('rostro identificado:', referenciaDetections?.descriptor);
         } catch (error) {
             console.error('rostro no identificado', error);
         }
     }
 
+    // Intervalo para la detección continua y comparación
     setInterval(async () => {
         if (reconocimientoPausado) {
             return;
@@ -250,24 +303,18 @@ video.addEventListener('play', async () => {
                     const referenciaDescriptor = referencia.descriptor;
                     const descriptor = detection.descriptor;
 
-                    // Dentro del bucle donde se realizan las comparaciones con los descriptores faciales
                     if (referenciaDescriptor && descriptor) {
                         try {
-                            // Calcular la distancia entre los descriptores faciales
                             const distancia = faceapi.euclideanDistance(descriptor, referenciaDescriptor);
                             const umbralDistancia = 0.50;
                             const umbralConfianza = 0.30;
 
-                            // Si la distancia es menor que el umbral y la confianza es mayor que el umbral
                             if (distancia < umbralDistancia && detection.detection._score > umbralConfianza) {
-                                // Usuario encontrado en la base de datos
                                 usuarioEnBaseDeDatos = true;
-
-                                // Imprimir en la consola que se ha encontrado el usuario
                                 console.log(`Usuario encontrado: ${referencia.idTrabajador}`);
                                 console.log(`Usuario encontrado: ${referencia.id_sucursal}`);
                                 if (!alertaMostrada) {
-                                    reconocimientoPausado = true; // Detener el reconocimiento
+                                    reconocimientoPausado = true;
 
                                     Swal.fire({
                                         title: "¡Reconocimiento facial exitoso!",
@@ -294,10 +341,8 @@ video.addEventListener('play', async () => {
                                             speak(`${referencia.nombre}, tu rostro ha sido detectado. Que tengas un bonito ${saludo}.`);
                                         }
                                     });
-                                    // Marcar la alerta como mostrada
                                     alertaMostrada = true;
                                 }
-                                // No es necesario continuar con otras iteraciones
                                 return;
                             }
                         } catch (error) {
@@ -305,10 +350,10 @@ video.addEventListener('play', async () => {
                         }
                     }
                 }
-                // Usuario no encontrado en la base de datos
+
                 if (!usuarioEnBaseDeDatos) {
                     if (!alertaMostrada) {
-                        reconocimientoPausado = true; // Detener el reconocimiento
+                        reconocimientoPausado = true;
                         Swal.fire({
                             title: "¡Usuario no reconocido!",
                             text: "Presiona OK para reiniciar el escáner.",
@@ -319,20 +364,17 @@ video.addEventListener('play', async () => {
                             confirmButtonText: 'OK'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                // Esperar 3 segundos antes de reanudar el reconocimiento
                                 setTimeout(() => {
                                     usuarioEncontrado = false;
-                                    reconocimientoPausado = false; // Reanudar el reconocimiento
-                                    alertaMostrada = false; // Restablecer la variable de la alerta
+                                    reconocimientoPausado = false;
+                                    alertaMostrada = false;
                                 }, 3000);
                             } else {
-                                // Reiniciar la detección si se cancela la alerta
                                 usuarioEncontrado = false;
-                                reconocimientoPausado = false; // Reanudar el reconocimiento
-                                alertaMostrada = false; // Restablecer la variable de la alerta
+                                reconocimientoPausado = false;
+                                alertaMostrada = false;
                             }
                         });
-                        // Marcar la alerta como mostrada
                         alertaMostrada = true;
                     }
                 }
@@ -340,10 +382,11 @@ video.addEventListener('play', async () => {
             });
         } else if (detections.length === 0 && usuarioEncontrado) {
             usuarioEncontrado = false;
-            alertaMostrada = false; // Restablecer la variable de la alerta
+            alertaMostrada = false;
         }
     }, 100);
 });
+
 
 function speak(text) {
     const utterance = new SpeechSynthesisUtterance(text);
