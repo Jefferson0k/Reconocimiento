@@ -7,49 +7,59 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+<html
+  lang="en"
+  class="light-style layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="<?= base_url('templeate/assets/') ?>"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
 
     <title>Recuperacion</title>
-    <meta content="" name="description">
-    <meta content="" name="keywords">
 
-    <!-- Favicons -->
-    <link href="" <?= base_url('Plantilla/assets/img/favicon.png') ?>" rel="icon">
-    <link href="" <?= base_url('Plantilla/assets/img/apple-touch-icon.png') ?>" rel="apple-touch-icon">
+    <meta name="description" content="" />
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="<?= base_url('templeate/assets/img/favicon/favicon.ico') ?>" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
-        rel="stylesheet">
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
 
-    <!-- Vendor CSS Files -->
-    <link href="<?= base_url('Plantilla/assets/vendor/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('Plantilla/assets/vendor/bootstrap-icons/bootstrap-icons.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('Plantilla/assets/vendor/boxicons/css/boxicons.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('Plantilla/assets/vendor/quill/quill.snow.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('Plantilla/assets/vendor/quill/quill.bubble.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('Plantilla/assets/vendor/remixicon/remixicon.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('Plantilla/assets/vendor/simple-datatables/style.css') ?>" rel="stylesheet">
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="<?= base_url('templeate/assets/vendor/fonts/boxicons.css') ?>" />
 
-    <!-- Template Main CSS File -->
-    <link href="<?= base_url('Plantilla/assets/css/style.css') ?>" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- =======================================================
-  * Template Name: NiceAdmin
-  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-  * Updated: Apr 7 2024 with Bootstrap v5.3.3
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
-</head>
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="<?= base_url('templeate/assets/vendor/css/core.css') ?>" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="<?= base_url('templeate/assets/vendor/css/theme-default.css') ?>" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="<?= base_url('templeate/assets/css/demo.css') ?>" />
 
-<body>
-    <?php
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="<?= base_url('templeate/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') ?>" />
+
+    <!-- Page CSS -->
+
+    <!-- Helpers -->
+    <script src="<?= base_url('templeate/assets/vendor/js/helpers.js') ?>"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="<?= base_url('templeate/assets/js/config.js') ?>"></script>
+  </head>
+
+  <body>
+  <?php
 
 use App\Models\CargoModelo;
 
@@ -83,68 +93,76 @@ if ($session->has('usuario')) {
     <?php 
 } 
 ?>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <!-- Menu -->
 
-    <!-- ======= Header ======= -->
-    <header id="header" class="header fixed-top d-flex align-items-center">
+        <!-- Layout container -->
+        <div class="layout-page">
+          <!-- Navbar -->
 
-        <div class="d-flex align-items-center justify-content-between">
-            <a href="index.html" class="logo d-flex align-items-center">
-                <img src="<?= base_url('Plantilla/assets/img/logo.png') ?>" alt="">
-                <span class="d-none d-lg-block">Facial recognition</span>
-            </a>
-            <i class="bi bi-list toggle-sidebar-btn"></i>
-        </div><!-- End Logo -->
-        <nav class="header-nav ms-auto">
-            <ul class="d-flex align-items-center">
+          <nav
+            class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+            id="layout-navbar"
+          >
+            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+              <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                <i class="bx bx-menu bx-sm"></i>
+              </a>
+            </div>
 
-                <li class="nav-item d-block d-lg-none">
-                    <a class="nav-link nav-icon search-bar-toggle " href="#">
-                        <i class="bi bi-search"></i>
-                    </a>
-                </li><!-- End Search Icon-->
-
-                <li class="nav-item dropdown pe-3">
-
-                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                        <img src="<?= base_url('Perfil/Restableciendo/6146587.png') ?>" alt="Profile"
-                            class="rounded-circle">
-                        <span class="d-none d-md-block dropdown-toggle ps-2"><?php echo $nombreFormateado; ?></span>
-                    </a><!-- End Profile Iamge Icon -->
-
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                        <li class="dropdown-header">
-                            <h6><?php echo $nombreCompleto ; ?></h6>
-                            <span><?php echo $cargoNombre ; ?></span>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center"
-                                href="<?= base_url('/Login/cerrarsesion')?>">
-                                <i class="bi bi-box-arrow-right"></i>
-                                <span>Sign Out</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </nav><!-- End Icons Navigation -->
-
-    </header><!-- End Header -->
-
-    <main id="main" class="main">
-        <section class="section profile">
-            <div class="row">
-                <div class="col-xl-6">
-                    <div class="card">
+            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+              
+              <ul class="navbar-nav flex-row align-items-center ms-auto">
+                
+                <!-- User -->
+                <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                  <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                    <div class="avatar avatar-online">
+                      <img src="<?= base_url('templeate/assets/img/avatars/1.png') ?>" alt class="w-px-40 h-auto rounded-circle" />
                     </div>
-                </div>
-                <div class="col-xl-12">
-                    <div class="card">
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="#">
+                        <div class="d-flex">
+                          <div class="flex-shrink-0 me-3">
+                            <div class="avatar avatar-online">
+                              <img src="<?= base_url('templeate/assets/img/avatars/1.png') ?>" alt class="w-px-40 h-auto rounded-circle" />
+                            </div>
+                          </div>
+                          <div class="flex-grow-1">
+                            <span class="fw-semibold d-block"><?php echo $nombreCompleto ; ?></span>
+                            <small class="text-muted"><?php echo $cargoNombre ; ?></small>
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <div class="dropdown-divider"></div>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="<?= base_url('/Login/cerrarsesion')?>">
+                        <i class="bx bx-power-off me-2"></i>
+                        <span class="align-middle">Log Out</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!--/ User -->
+              </ul>
+            </div>
+          </nav>
+
+          <!-- / Navbar -->
+
+          <!-- Content wrapper -->
+          <div class="content-wrapper">
+            <!-- Content -->
+
+            <div class="container-xxl flex-grow-1 container-p-y">
+            <div class="card">
                         <div class="card-body pt-3">
                             <!-- Bordered Tabs -->
                             <ul class="nav nav-tabs nav-tabs-bordered">
@@ -191,40 +209,47 @@ if ($session->has('usuario')) {
                             </div><!-- End Bordered Tabs -->
                         </div>
                     </div>
-                </div>
+              <!-- Basic Bootstrap Table -->
+              
+              <!--/ Basic Bootstrap Table -->
+            <!-- Footer -->
+            <footer class="content-footer footer bg-footer-theme">
+              <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+                
+              </div>
+            </footer>
+            <!-- / Footer -->
 
-            </div>
-        </section>
-
-    </main><!-- End #main -->
-
-    <!-- ======= Footer ======= -->
-    <footer id="footer" class="footer">
-        <div class="copyright">
-            &copy; Copyright <strong><span>Soluciones en ingenieria T & J</span></strong>. Todos los derechos
-            reservados.
+            <div class="content-backdrop fade"></div>
+          </div>
+          <!-- Content wrapper -->
         </div>
-        <div class="credits">
-            Diseñado por <a href="https://www.facebook.com/jefer.covenasroman?mibextid=JRoKGi">Jefferson0k</a>
-        </div>
-    </footer><!-- End Footer -->
+        <!-- / Layout page -->
+      </div>
 
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-            class="bi bi-arrow-up-short"></i></a>
+      <!-- Overlay -->
+      <div class="layout-overlay layout-menu-toggle"></div>
+    </div>
+    <!-- / Layout wrapper -->
 
-    <!-- Vendor JS Files -->
-    <script src="<?= base_url('Plantilla/assets/vendor/apexcharts/apexcharts.min.js') ?>"></script>
-    <script src="<?= base_url('Plantilla/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
-    <script src="<?= base_url('Plantilla/assets/vendor/chart.js/chart.umd.js') ?>"></script>
-    <script src="<?= base_url('Plantilla/assets/vendor/echarts/echarts.min.js') ?>"></script>
-    <script src="<?= base_url('Plantilla/assets/vendor/quill/quill.min.js') ?>"></script>
-    <script src="<?= base_url('Plantilla/assets/vendor/simple-datatables/simple-datatables.js') ?>"></script>
-    <script src="<?= base_url('Plantilla/assets/vendor/tinymce/tinymce.min.js') ?>"></script>
-    <script src="<?= base_url('Plantilla/assets/vendor/php-email-form/validate.js') ?>"></script>
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="<?= base_url('templeate/assets/vendor/libs/jquery/jquery.js') ?>"></script>
+    <script src="<?= base_url('templeate/assets/vendor/libs/popper/popper.js') ?>"></script>
+    <script src="<?= base_url('templeate/assets/vendor/js/bootstrap.js') ?>"></script>
+    <script src="<?= base_url('templeate/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') ?>"></script>
 
-    <!-- Template Main JS File -->
-    <script src="<?= base_url('Plantilla/assets/js/main.js') ?>"></script>
+    <script src="<?= base_url('templeate/assets/vendor/js/menu.js') ?>"></script>
+    <!-- endbuild -->
 
-</body>
+    <!-- Vendors JS -->
 
+    <!-- Main JS -->
+    <script src="<?= base_url('templeate/assets/js/main.js') ?>"></script>
+
+    <!-- Page JS -->
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
 </html>
