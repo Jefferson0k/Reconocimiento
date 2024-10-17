@@ -1,3 +1,8 @@
+<?php
+$session = \Config\Services::session();
+$cargoId = $session->get('Cargo');
+?>
+
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
         <a href="<?= base_url('/api/Dashboard') ?>" class="app-brand-link">
@@ -57,12 +62,14 @@
 
     <ul class="menu-inner py-1">
         <!-- Dashboard -->
+        <?php if ($cargoId != 3): // Mostrar solo si el ID de cargo no es 3 ?>
         <li class="menu-item active">
             <a href="<?= base_url('/api/Dashboard') ?>" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div data-i18n="Analytics">Dashboard</div>
             </a>
         </li>
+        <?php endif; ?>
 
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">shares amounts</span>
@@ -78,13 +85,16 @@
                         <div data-i18n="Account">Trabajadores</div>
                     </a>
                 </li>
+                <?php if ($cargoId != 3): // Mostrar solo si el ID de cargo no es 3 ?>
                 <li class="menu-item">
                     <a href="<?= base_url('/api/Horario/vista') ?>" class="menu-link">
                         <div data-i18n="Notifications">Horarios</div>
                     </a>
                 </li>
+                <?php endif; ?>
             </ul>
         </li>
+        <?php if ($cargoId != 3): // Mostrar solo si el ID de cargo no es 3 ?>
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
@@ -103,6 +113,8 @@
                 </li>
             </ul>
         </li>
+        <?php endif; ?>
+        <?php if ($cargoId != 3): // Mostrar solo si el ID de cargo no es 3 ?>
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-cube-alt"></i>
@@ -116,6 +128,8 @@
                 </li>
             </ul>
         </li>
+        <?php endif; ?>
+
         <!-- Components -->
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Generalities</span></li>
         <!-- Cards -->
@@ -132,7 +146,7 @@
                 <div data-i18n="Boxicons">Perfil</div>
             </a>
         </li>
-
+        <?php if ($cargoId != 3): // Mostrar solo si el ID de cargo no es 3 ?>
         <!-- Forms & Tables -->
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Systems</span></li>
         <!-- Forms -->
@@ -149,5 +163,6 @@
                 </li>
             </ul>
         </li>
+        <?php endif; ?>
     </ul>
 </aside>
