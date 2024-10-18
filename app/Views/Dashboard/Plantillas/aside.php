@@ -85,13 +85,6 @@ $cargoId = $session->get('Cargo');
                         <div data-i18n="Account">Trabajadores</div>
                     </a>
                 </li>
-                <?php if ($cargoId != 3): // Mostrar solo si el ID de cargo no es 3 ?>
-                <li class="menu-item">
-                    <a href="<?= base_url('/api/Horario/vista') ?>" class="menu-link">
-                        <div data-i18n="Notifications">Horarios</div>
-                    </a>
-                </li>
-                <?php endif; ?>
             </ul>
         </li>
         <?php if ($cargoId != 3): // Mostrar solo si el ID de cargo no es 3 ?>
@@ -102,13 +95,8 @@ $cargoId = $session->get('Cargo');
             </a>
             <ul class="menu-sub">
                 <li class="menu-item">
-                    <a href="<?= base_url('/api/Sucursal/vista') ?>" class="menu-link" target="_blank">
+                    <a href="<?= base_url('/api/Sucursal/vista') ?>" class="menu-link">
                         <div data-i18n="Basic">Sucursal</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="<?= base_url('/api/Trunos/vista') ?>" class="menu-link" target="_blank">
-                        <div data-i18n="Basic">Turnos</div>
                     </a>
                 </li>
             </ul>
@@ -153,12 +141,27 @@ $cargoId = $session->get('Cargo');
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-detail"></i>
-                <div data-i18n="Form Elements">Cargos</div>
+                <div data-i18n="Form Elements">Configuracion</div>
             </a>
             <ul class="menu-sub">
                 <li class="menu-item">
                     <a href="<?= base_url('/api/Cargo/vista') ?>" class="menu-link">
                         <div data-i18n="Basic Inputs">Configurar Cargos</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="<?= base_url('/api/Horario/vista') ?>" class="menu-link">
+                        <div data-i18n="Notifications">Horarios</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="<?= base_url('/api/Trunos/vista') ?>" class="menu-link">
+                        <div data-i18n="Basic">Turnos</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="<?= base_url('/api/Sucursal/vista') ?>" class="menu-link">
+                        <div data-i18n="Basic">Sucursal</div>
                     </a>
                 </li>
             </ul>
