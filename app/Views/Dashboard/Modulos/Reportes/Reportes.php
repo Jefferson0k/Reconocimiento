@@ -5,11 +5,19 @@
 <script src="https://kit.fontawesome.com/47438e1d36.js" crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/face-api.js/3.0.0/face-api.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 <script src="<?= base_url('js/jsAsistencia.js') ?>"></script>
 <script>
 var ruta = '<?= base_url() ?>';
 document.addEventListener('DOMContentLoaded', function() {
     inicializarComponentes();
+});
+
+$(document).ready(function() {
+    $('#btnImprimir').on('click', imprimirTabla);
+    $('#btnDescargarExcel').on('click', descargarExcel);
 });
 </script>
 <style>
@@ -50,6 +58,8 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Trabajadores Generales</h5>
+            <button id="btnImprimir" class="btn-primary" >Imprimir</button>
+            <button id="btnDescargarExcel" class="btn-success" >Descargar Excel</button>
             <table id="tblTGenerales" class="display nowrap" style="width:100%">
                 <thead>
                     <tr>

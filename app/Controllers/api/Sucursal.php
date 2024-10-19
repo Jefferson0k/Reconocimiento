@@ -69,14 +69,12 @@ class Sucursal extends BaseController{
         if (!$userId) {
             return $this->failUnauthorized('Usuario no autenticado.');
         }
-        // Obtener los datos del formulario
         $data = [ 
             'direccion' => $this->request->getPost('direccion'),
             'nombre' => $this->request->getPost('nombre'),
             'estado' => $this->request->getPost('estado') == '1' ? 1 : 0,
             'id_user' => $userId 
         ];    
-        // Cargar las reglas de validación desde la configuración
         $validation = \Config\Services::validation();
         $validation->setRules((new \Config\Validation())->doseveSucursales);
         if (!$validation->run($data)) {
@@ -131,17 +129,13 @@ class Sucursal extends BaseController{
             $idSucursal = $id;
             $rutaPrincipal = ROOTPATH . 'public/Trabajadores/Sucursales/';
             $rutaCarpeta = $rutaPrincipal . $idSucursal . '/';
-    
-            // Actualiza el registro con el id_user que lo está eliminando
             $this->model->update($idSucursal, ['deleted_by' => $id_user]);
     
-            // Intenta eliminar la carpeta si existe
             if (is_dir($rutaCarpeta)) {
                 $this->deleteDirectoryContents($rutaCarpeta);
                 rmdir($rutaCarpeta);
             }
     
-            // Elimina el registro de la base de datos
             if ($this->model->delete($idSucursal)) {
                 $deletedHorario = $this->model->withDeleted()->find($idSucursal);
                 if ($deletedHorario) {
@@ -195,7 +189,7 @@ class Sucursal extends BaseController{
                 $file_path = $csv->getTempName();
     
                 $model = new SucursalModelo();
-                $model->insertDataFromCsv($file_path, $userId); // Pasar el ID del usuario autenticado
+                $model->insertDataFromCsv($file_path, $userId);
     
                 $response['success'] = true;
                 $response['message'] = 'El archivo CSV se ha subido y procesado correctamente.';
@@ -238,23 +232,23 @@ class Sucursal extends BaseController{
             $deletedIds = [];
             $errores = [];            
             foreach ($ids as $id) {
-                // Verifica si el registro existe
+
                 $Sucursal = $model->withDeleted()->find($id);
                 if (!$Sucursal) {
                     $errores[] = "El Sucursal con ID $id no existe";
                     continue;
                 }    
-                // Actualiza el campo deleted_by antes de eliminar
+
                 $model->update($id, ['deleted_by' => $id_user]);    
-                // Ruta de la carpeta
+
                 $rutaPrincipal = ROOTPATH . 'public/Trabajadores/Sucursales/';
                 $rutaCarpeta = $rutaPrincipal . $id . '/';    
-                // Intenta eliminar la carpeta si existe
+
                 if (is_dir($rutaCarpeta)) {
                     $this->deleteDirectoryContents($rutaCarpeta);
                     rmdir($rutaCarpeta);
                 }    
-                // Elimina el registro de la base de datos
+
                 if ($model->delete($id)) {
                     $deletedIds[] = $id;
                 } else {

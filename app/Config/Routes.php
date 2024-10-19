@@ -59,7 +59,8 @@ $routes->group('api', ['namespace' => 'App\Controllers\api'], function ($routes)
     $routes->get('Trabajador/(:num)', 'Trabajador::getTrabajadoresBySucursal/$1');
     $routes->post('Trabajador/(:num)/(:num)', 'Trabajador::update/$1/$2');
     $routes->get('Trabajador/(:num)/(:num)', 'Trabajador::show/$1/$2');
-    
+    $routes->get('trabajadores', 'Trabajador::indexGeneral');
+
     #Usuario metodos para la vista y acciones
     $routes->get('Usuario/vista', 'Usuario::vista');
     $routes->get('Usuario/(:num)', 'Usuario::index/$1');
@@ -108,6 +109,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\api'], function ($routes)
 
     #Dashboard
     $routes->get('Dashboard','Dashboard::vista');
+    $routes->get('Dashboard/General','Dashboard::index');
     #Turnos
     $routes->get('Trunos/vista','Trunos::vista');
     $routes->get('Trunos/(:num)','Trunos::index/$1');

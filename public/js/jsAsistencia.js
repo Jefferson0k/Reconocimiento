@@ -153,107 +153,55 @@ function listar(idSucursal, fecha_inicio, fecha_fin) {
         dataType: 'json',
         data: postData,
         success: function(response) {
-            $('#tblTGenerales').DataTable().destroy();
+            console.log(response);
+            // Destruir el DataTable si ya existe
+            if ($.fn.DataTable.isDataTable('#tblTGenerales')) {
+                $('#tblTGenerales').DataTable().clear().destroy();
+            }
+
             $('#tblTGenerales tbody').empty();
-            $.each(response.data, function(index, trabajador) {
-                $('#tblTGenerales tbody').append(
-                    '<tr class="fila-tabla" data-id="' + trabajador.id + '">' +
-                    '<td>' + contador++ + '</td>' +
-                    '<td>' + trabajador.NombreCompleto + '</td>' +
-                    '<td>' + trabajador.dias_laborados + '</td>' +
-                    '<td>' + trabajador.dias_no_laborados + '</td>' +
-                    '<td>' + trabajador.total_horas_trabajadas + '</td>' +
-                    '<td>' + trabajador.total_horas_extras + '</td>' +
-                    '<td>' + trabajador.total_horas_tardanzas + '</td>' +
-                    '<td>' + trabajador.total_tardanza_break + '</td>' +
-                    '<td>' + trabajador.total_horas_no_trabajadas + '</td>' +
-                    '</tr>'
-                );
-                console.log('ID de la consulta:', trabajador.id);
-            });
+
+            // Llenar la tabla con datos
+            if (response.data && response.data.length > 0) {
+                $.each(response.data, function(index, trabajador) {
+                    $('#tblTGenerales tbody').append(
+                        '<tr class="fila-tabla" data-id="' + trabajador.id + '">' +
+                        '<td>' + contador++ + '</td>' +
+                        '<td>' + trabajador.NombreCompleto + '</td>' +
+                        '<td>' + trabajador.dias_laborados + '</td>' +
+                        '<td>' + trabajador.dias_no_laborados + '</td>' +
+                        '<td>' + trabajador.total_horas_trabajadas + '</td>' +
+                        '<td>' + trabajador.total_horas_extras + '</td>' +
+                        '<td>' + trabajador.total_horas_tardanzas + '</td>' +
+                        '<td>' + trabajador.total_tardanza_break + '</td>' +
+                        '<td>' + trabajador.total_horas_no_trabajadas + '</td>' +
+                        '</tr>'
+                    );
+                });
+            } else {
+                $('#tblTGenerales tbody').append('<tr><td colspan="9" class="text-center">No se encontraron registros.</td></tr>');
+            }
+
+            // Inicializar DataTables sin botones
             $('#tblTGenerales').DataTable({
                 responsive: true,
-                layout: {
-                    topStart: {
-                        buttons: [
-                            {
-                                extend: 'excelHtml5',
-                                text: '<i class="fa fa-file-excel-o"></i>',
-                                titleAttr: 'Excel',
-                                exportOptions: {
-                                    columns: [0, 1, 2], // Índices de las columnas que deseas exportar (0, 1, 2 son ejemplos)
-                                    orthogonal: 'selected' // Opción para exportar solo filas seleccionadas
-                                },
-                                customize: function (xlsx) {
-                                    var sheet = xlsx.xl.worksheets['sheet1.xml'];
-                                    $('row c[r^="A1"]', sheet).attr('s', '2').text('Sucursales Generales - Excel');
-                                    $('row[r="1"] c', sheet).each(function () {
-                                        $(this).attr('s', '27');
-                                    });
-                            
-                                    var cellA1 = $('row c[r^="A1"]', sheet).text();
-                                    console.log('Contenido de la celda A1:', cellA1);
-                                }
-                            },
-                            {
-                                extend: 'csvHtml5',
-                                text: '<i class="fa fa-file-text-o"></i>',
-                                titleAttr: 'CSV',
-                                exportOptions: {
-                                    columns: [0, 1, 2, 3, 4, 5, 6, 7],
-                                    modifier: {
-                                        selected: true
-                                    }
-                                },
-                                title: 'Sucursales Generales - CSV'
-                            },
-                            {
-                                extend: 'pdfHtml5',
-                                text: '<i class="fa fa-file-pdf-o"></i>',
-                                titleAttr: 'PDF',
-                                exportOptions: {
-                                    columns: [0, 1, 2, 3,  4, 5, 6, 7],
-                                    modifier: {
-                                        selected: true
-                                    }
-                                },
-                                title: 'Sucursales Generales - PDF'
-                            },
-                            {
-                                extend: 'print',
-                                text: '<i class="fa fa-print"></i>',
-                                titleAttr: 'Print',
-                                customize: function (win) {
-                                    $(win.document.body).find('h1').text('Sucursales Generales');
-                                    $(win.document.body).find('table').addClass('display').addClass('compact');
-                                },
-                                exportOptions: {
-                                    columns: [0, 1, 2, 3,  4, 5, 6, 7]
-                                }
-                            }
-                        ]
-                    }
-                },
                 language: {
-                    "sProcessing":     "Procesando...",
-                    "sLengthMenu":     "Mostrar _MENU_ registros",
-                    "sZeroRecords":    "No se encontraron resultados",
-                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
-                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
-                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
-                    "sInfoPostFix":    "",
-                    "sSearch":         "Buscar:",
-                    "sUrl":            "",
-                    "sInfoThousands":  ",",
-                    "sLoadingRecords": "Cargando...",
+                    "sProcessing": "Procesando...",
+                    "sLengthMenu": "Mostrar _MENU_ registros",
+                    "sZeroRecords": "No se encontraron resultados",
+                    "sEmptyTable": "Ningún dato disponible en esta tabla",
+                    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                    "sSearch": "Buscar:",
                     "oAria": {
-                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
                         "sSortDescending": ": Activar para ordenar la columna de manera descendente"
                     }
                 }
             });
 
+            // Manejo del clic en las filas de la tabla
             $('#tblTGenerales tbody').off('click', 'tr').on('click', 'tr', function() {
                 $('#tblTGenerales tbody tr').removeClass('fila-seleccionada');
                 $(this).addClass('fila-seleccionada');
@@ -276,10 +224,43 @@ function listar(idSucursal, fecha_inicio, fecha_fin) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: xhr.responseJSON.error 
+                text: xhr.responseJSON.error || 'Error desconocido'
             });
         }
     });
+}
+
+function imprimirTabla() {
+    var tabla = document.getElementById('tblTGenerales');
+    var nuevaVentana = window.open('', '_blank', 'width=800,height=600');
+    nuevaVentana.document.write('<html><head><title>Imprimir</title>');
+    nuevaVentana.document.write('</head><body>');
+    nuevaVentana.document.write('<h2>Reporte de Trabajadores Generales</h2>');
+    nuevaVentana.document.write(tabla.outerHTML);
+    nuevaVentana.document.write('</body></html>');
+    nuevaVentana.document.close();
+    nuevaVentana.print();
+}
+
+function descargarExcel() {
+    var tabla = $('#tblTGenerales').DataTable();
+    var data = tabla.rows().data().toArray();
+    var wb = XLSX.utils.book_new();
+    var ws = XLSX.utils.json_to_sheet(data.map(function(item) {
+        return {
+            '#': item[0],
+            'Nombre Completo': item[1],
+            'Días Laborados': item[2],
+            'No Laborados': item[3],
+            '(Horas) Trabajadas': item[4],
+            '(Horas) Extras': item[5],
+            '(Break) Tardanzas': item[6],
+            'Días no Laborables': item[7],
+            'Total de horas no Trabajadas': item[8]
+        };
+    }));
+    XLSX.utils.book_append_sheet(wb, ws, 'Trabajadores Generales');
+    XLSX.writeFile(wb, 'Trabajadores_Generales.xlsx');
 }
 
 function listarDetalle(idSucursal, id_trabajador, fecha_inicio, fecha_fin) {
@@ -299,19 +280,16 @@ function listarDetalle(idSucursal, id_trabajador, fecha_inicio, fecha_fin) {
         dataType: 'json',
         data: postData,
         success: function(response) {
-            console.log(response); // Para verificar los datos devueltos por el servidor
+            console.log(response);
 
-            // Verificar si la respuesta tiene datos
             if (response.data && response.data.length > 0) {
-                // Destruir la instancia de DataTables si ya existe
                 if ($.fn.DataTable.isDataTable('#tblTDetalles')) {
                     $('#tblTDetalles').DataTable().destroy();
-                    $('#tblTDetalles tbody').empty(); // Vaciar la tabla
+                    $('#tblTDetalles tbody').empty(); 
                 }
 
-                // Llenar la tabla con los datos recibidos
                 $.each(response.data, function(index, trabajador) {
-                    if (trabajador && trabajador.id_trabajador) { // Validar los datos
+                    if (trabajador && trabajador.id_trabajador) {
                         $('#tblTDetalles tbody').append(
                             '<tr>' +
                             '<td>' + contador++ + '</td>' +
@@ -329,28 +307,25 @@ function listarDetalle(idSucursal, id_trabajador, fecha_inicio, fecha_fin) {
                     }
                 });
             } else {
-                // Si no hay datos, destruir la tabla y mostrar un mensaje vacío
                 if ($.fn.DataTable.isDataTable('#tblTDetalles')) {
                     $('#tblTDetalles').DataTable().destroy();
                     $('#tblTDetalles tbody').empty();
                 }
 
-                // Agregar una fila vacía como mensaje
                 $('#tblTDetalles tbody').append('<tr><td colspan="10">No hay datos disponibles</td></tr>');
             }
 
-            // Inicializar DataTables
             $('#tblTDetalles').DataTable({
                 responsive: true,
-                dom: 'Bfrtip', // Añadir para que los botones funcionen
+                dom: 'Bfrtip',
                 buttons: [
                     {
                         extend: 'excelHtml5',
                         text: '<i class="fa fa-file-excel-o"></i>',
                         titleAttr: 'Exportar a Excel',
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], // Ajusta según las columnas visibles
-                            orthogonal: 'selected' // Exportar solo filas seleccionadas
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                            orthogonal: 'selected'
                         },
                         customize: function (xlsx) {
                             var sheet = xlsx.xl.worksheets['sheet1.xml'];
@@ -369,7 +344,7 @@ function listarDetalle(idSucursal, id_trabajador, fecha_inicio, fecha_fin) {
                         titleAttr: 'Exportar a PDF',
                         title: 'Asistencia Detallada',
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], // Ajusta según las columnas visibles
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                             modifier: {
                                 selected: true
                             }
@@ -384,7 +359,7 @@ function listarDetalle(idSucursal, id_trabajador, fecha_inicio, fecha_fin) {
                             $(win.document.body).find('table').addClass('display').addClass('compact');
                         },
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], // Ajusta según las columnas visibles
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                         }
                     }
                 ],

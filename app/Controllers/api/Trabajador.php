@@ -140,7 +140,6 @@ class Trabajador extends BaseController{
             }
     
             if ($imagen && $imagen->isValid() && $imagen->hasMoved() == false) {
-                // Validar tipo y tamaño de archivo (opcional)
                 $nombreImagen = $imagen->getRandomName();
                 $imagen->move($rutaSucursal, $nombreImagen);
                 $data['foto'] = $nombreImagen;
@@ -162,46 +161,37 @@ class Trabajador extends BaseController{
         }
     }
     public function update($id, $id_sucursal): ResponseInterface {
-        // Obtener los datos de la solicitud
         $input = $this->request->getPost();
         $foto = $this->request->getFile('foto');
         $trabajador = $this->model->find($id);
     
-        // Verificar si el trabajador existe
         if (!$trabajador) {
             return $this->failNotFound('El Trabajador no existe');
         }
     
-        // Ruta base para guardar la imagen
         $basePath = ROOTPATH . 'public/Trabajadores/Sucursales/' . $id_sucursal . '/';
     
-        // Si hay una nueva foto, procesarla
         if ($foto && $foto->isValid() && !$foto->hasMoved()) {
-            // Crear el directorio si no existe
             if (!is_dir($basePath)) {
                 mkdir($basePath, 0777, true);
             }
     
-            // Eliminar la foto antigua si existe
             $oldPhotoPath = $basePath . $trabajador['foto'];
             if (file_exists($oldPhotoPath)) {
                 unlink($oldPhotoPath);
             }
     
-            // Generar un nuevo nombre para la foto y moverla
             try {
                 $newPhotoName = time() . '_' . bin2hex(random_bytes(10)) . '.' . $foto->getClientExtension();
                 $foto->move($basePath, $newPhotoName);
                 $data['foto'] = $newPhotoName;
     
-                // Actualizar el campo 'foto' en la base de datos
                 $this->model->update($id, ['foto' => $newPhotoName]);
             } catch (\Exception $e) {
                 return $this->failServerError('Error al mover la nueva foto: ' . $e->getMessage());
             }
         }
     
-        // Actualizar los demás datos del trabajador
         $data = [
             'dni' => $input['dni'],
             'nombres' => $input['nombres'],
@@ -212,12 +202,10 @@ class Trabajador extends BaseController{
             'updated_by' => session()->get('id'),
         ];
     
-        // Guardar los cambios en la base de datos (excepto 'foto')
         if (!$this->model->update($id, $data)) {
             return $this->failServerError('No se pudo actualizar el Trabajador');
         }
     
-        // Responder con éxito
         return $this->respond(['success' => 'Trabajador actualizado con éxito']);
     }   
     public function delete($id): ResponseInterface{
@@ -306,5 +294,5 @@ class Trabajador extends BaseController{
     public function getTrabajadoresBySucursal($id_sucursal){
         $trabajadores = $this->model->where('id_sucursal', $id_sucursal)->findAll();
         return $this->response->setJSON(['data' => $trabajadores]);
-    } 
+    }
 }
