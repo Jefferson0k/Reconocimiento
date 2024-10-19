@@ -299,108 +299,106 @@ function listarDetalle(idSucursal, id_trabajador, fecha_inicio, fecha_fin) {
         dataType: 'json',
         data: postData,
         success: function(response) {
+            console.log(response); // Para verificar los datos devueltos por el servidor
+
             // Verificar si la respuesta tiene datos
             if (response.data && response.data.length > 0) {
                 // Destruir la instancia de DataTables si ya existe
                 if ($.fn.DataTable.isDataTable('#tblTDetalles')) {
                     $('#tblTDetalles').DataTable().destroy();
+                    $('#tblTDetalles tbody').empty(); // Vaciar la tabla
                 }
 
-                $('#tblTDetalles tbody').empty();
+                // Llenar la tabla con los datos recibidos
                 $.each(response.data, function(index, trabajador) {
-                    $('#tblTDetalles tbody').append(
-                        '<tr>' +
-                        '<td>' + contador++ + '</td>' +
-                        '<td>' + trabajador.fecha + '</td>' +
-                        '<td>' + trabajador.id_trabajador.NombreCompleto + '</td>' +
-                        '<td>' + trabajador.id_trabajador.dni + '</td>' +
-                        '<td>' + trabajador.hora_entrada + '</td>' +
-                        '<td>' + trabajador.break_inicio + '</td>' +
-                        '<td>' + trabajador.break_final + '</td>' +
-                        '<td>' + trabajador.hora_salida + '</td>' +
-                        '<td>' + trabajador.horas_trabajadas + '</td>' +
-                        '<td>' + trabajador.horas_extras + '</td>' +
-                        '</tr>'
-                    );
+                    if (trabajador && trabajador.id_trabajador) { // Validar los datos
+                        $('#tblTDetalles tbody').append(
+                            '<tr>' +
+                            '<td>' + contador++ + '</td>' +
+                            '<td>' + (trabajador.fecha || '') + '</td>' +
+                            '<td>' + (trabajador.id_trabajador.NombreCompleto || '') + '</td>' +
+                            '<td>' + (trabajador.id_trabajador.dni || '') + '</td>' +
+                            '<td>' + (trabajador.hora_entrada || '') + '</td>' +
+                            '<td>' + (trabajador.break_inicio || '') + '</td>' +
+                            '<td>' + (trabajador.break_final || '') + '</td>' +
+                            '<td>' + (trabajador.hora_salida || '') + '</td>' +
+                            '<td>' + (trabajador.horas_trabajadas || '') + '</td>' +
+                            '<td>' + (trabajador.horas_extras || '') + '</td>' +
+                            '</tr>'
+                        );
+                    }
                 });
             } else {
-                // Si no hay datos, mostrar un mensaje en la tabla
+                // Si no hay datos, destruir la tabla y mostrar un mensaje vacío
                 if ($.fn.DataTable.isDataTable('#tblTDetalles')) {
                     $('#tblTDetalles').DataTable().destroy();
+                    $('#tblTDetalles tbody').empty();
                 }
 
-                $('#tblTDetalles tbody').empty();
-                $('#tblTDetalles tbody').append(
-                );
+                // Agregar una fila vacía como mensaje
+                $('#tblTDetalles tbody').append('<tr><td colspan="10">No hay datos disponibles</td></tr>');
             }
 
             // Inicializar DataTables
             $('#tblTDetalles').DataTable({
                 responsive: true,
-                layout: {
-                    topStart: {
-                        buttons: [
-                            {
-                                extend: 'excelHtml5',
-                                text: '<i class="fa fa-file-excel-o"></i>',
-                                titleAttr: 'Excel',
-                                exportOptions: {
-                                    columns: [0, 1, 2, 3,4,5,6,7,8,9,10], // Índices de las columnas que deseas exportar (0, 1, 2 son ejemplos)
-                                    orthogonal: 'selected' // Opción para exportar solo filas seleccionadas
-                                },
-                                customize: function (xlsx) {
-                                    var sheet = xlsx.xl.worksheets['sheet1.xml'];
-                                    $('row c[r^="A1"]', sheet).attr('s', '2').text('Asistencia');
-                                    $('row[r="1"] c', sheet).each(function () {
-                                        $(this).attr('s', '27');
-                                    });
+                dom: 'Bfrtip', // Añadir para que los botones funcionen
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel-o"></i>',
+                        titleAttr: 'Exportar a Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], // Ajusta según las columnas visibles
+                            orthogonal: 'selected' // Exportar solo filas seleccionadas
+                        },
+                        customize: function (xlsx) {
+                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                            $('row c[r^="A1"]', sheet).attr('s', '2').text('Asistencia');
+                            $('row[r="1"] c', sheet).each(function () {
+                                $(this).attr('s', '27');
+                            });
                             
-                                    var cellA1 = $('row c[r^="A1"]', sheet).text();
-                                    console.log('Contenido de la celda A1:', cellA1);
-                                }
-                            },
-                            {
-                                extend: 'pdfHtml5',
-                                text: '<i class="fa fa-file-pdf-o"></i>',
-                                titleAttr: 'PDF',
-                                exportOptions: {
-                                    columns: [0, 1, 2, 3,4,5,6,7,8,9,10], // Índices de las columnas que deseas exportar (0, 1, 2 son ejemplos)
-                                    modifier: {
-                                        selected: true
-                                    }
-                                },
-                                title: 'Asistencia Detallada'
-                            },
-                            {
-                                extend: 'print',
-                                text: '<i class="fa fa-print"></i>',
-                                titleAttr: 'Print',
-                                customize: function (win) {
-                                    $(win.document.body).find('h1').text('Asistencia');
-                                    $(win.document.body).find('table').addClass('display').addClass('compact');
-                                },
-                                exportOptions: {
-                                    columns: [0, 1, 2, 3,4,5,6,7,8,9,10], // Índices de las columnas que deseas exportar (0, 1, 2 son ejemplos)
-                                }
+                            var cellA1 = $('row c[r^="A1"]', sheet).text();
+                            console.log('Contenido de la celda A1:', cellA1);
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: '<i class="fa fa-file-pdf-o"></i>',
+                        titleAttr: 'Exportar a PDF',
+                        title: 'Asistencia Detallada',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], // Ajusta según las columnas visibles
+                            modifier: {
+                                selected: true
                             }
-                        ]
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i>',
+                        titleAttr: 'Imprimir',
+                        customize: function (win) {
+                            $(win.document.body).find('h1').text('Asistencia');
+                            $(win.document.body).find('table').addClass('display').addClass('compact');
+                        },
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], // Ajusta según las columnas visibles
+                        }
                     }
-                },
+                ],
                 language: {
-                    "sProcessing":     "Procesando...",
-                    "sLengthMenu":     "Mostrar _MENU_ registros",
-                    "sZeroRecords":    "No se encontraron resultados",
-                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
-                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
-                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
-                    "sInfoPostFix":    "",
-                    "sSearch":         "Buscar:",
-                    "sUrl":            "",
-                    "sInfoThousands":  ",",
-                    "sLoadingRecords": "Cargando...",
+                    "sProcessing": "Procesando...",
+                    "sLengthMenu": "Mostrar _MENU_ registros",
+                    "sZeroRecords": "No se encontraron resultados",
+                    "sEmptyTable": "Ningún dato disponible en esta tabla",
+                    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                    "sSearch": "Buscar:",
                     "oAria": {
-                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
                         "sSortDescending": ": Activar para ordenar la columna de manera descendente"
                     }
                 }

@@ -75,46 +75,25 @@ $cargoId = $session->get('Cargo');
             <span class="menu-header-text">shares amounts</span>
         </li>
         <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <a href=<?= base_url('/api/Trabajador/vista') ?> class="menu-link">
                 <i class="menu-icon tf-icons bx bx-dock-top"></i>
-                <div data-i18n="Account Settings">Trabajadores</div>
+                <div data-i18n="Support">Trabajadores</div>
             </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="<?= base_url('/api/Trabajador/vista') ?>" class="menu-link">
-                        <div data-i18n="Account">Trabajadores</div>
-                    </a>
-                </li>
-            </ul>
         </li>
         <?php if ($cargoId != 3): // Mostrar solo si el ID de cargo no es 3 ?>
         <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-                <div data-i18n="Authentications">Sucursales</div>
+            <a href="<?= base_url('/api/Sucursal/vista') ?>" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-file"></i>
+                <div data-i18n="Documentation">Sucursal</div>
             </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="<?= base_url('/api/Sucursal/vista') ?>" class="menu-link">
-                        <div data-i18n="Basic">Sucursal</div>
-                    </a>
-                </li>
-            </ul>
         </li>
         <?php endif; ?>
         <?php if ($cargoId != 3): // Mostrar solo si el ID de cargo no es 3 ?>
         <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <a href="<?= base_url('/api/Usuario/vista') ?>" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-                <div data-i18n="Misc">Usuarios</div>
+                <div data-i18n="Tables">Usuarios</div>
             </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="<?= base_url('/api/Usuario/vista') ?>" class="menu-link">
-                        <div data-i18n="Error">Usuarios</div>
-                    </a>
-                </li>
-            </ul>
         </li>
         <?php endif; ?>
 

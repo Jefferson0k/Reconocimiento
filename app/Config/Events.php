@@ -53,7 +53,7 @@ Events::on('pre_system', static function (): void {
         }
     }
 });
-Events::on('post_controller_constructor', function(){
+/*Events::on('post_controller_constructor', function(){
     $router = service('router');
     $class = strtoupper($router->controllerName());
     $method = strtoupper($router->methodName());
@@ -85,4 +85,4 @@ Events::on('post_controller_constructor', function(){
             }
         }
     }
-});
+});*/

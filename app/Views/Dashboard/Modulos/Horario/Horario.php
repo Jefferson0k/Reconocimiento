@@ -382,10 +382,12 @@ function calcularHoras() {
             breakSalidaDate.setDate(breakSalidaDate.getDate() + 1);
         }
 
+        // Calcular horas trabajadas
         let horasTrabajadas = (salidaDate - ingresoDate) / (1000 * 60 * 60);
-        const tiempoBreak = (breakSalidaDate - breakEntradaDate) / (1000 * 60 * 60);
+        const tiempoBreak = (breakSalidaDate - breakEntradaDate) / (1000 * 60); // Calcular en minutos
 
-        horasTrabajadas -= tiempoBreak;
+        // Ajustar las horas trabajadas restando el tiempo de break en horas
+        horasTrabajadas -= tiempoBreak / 60;
 
         const horas = Math.floor(horasTrabajadas);
         const minutos = Math.round((horasTrabajadas - horas) * 60);
@@ -394,8 +396,12 @@ function calcularHoras() {
         const $totalHoras = document.getElementById("totalHoras");
         $totalHoras.value = horasTotales;
 
+        // Formatear el tiempo total de break en horas y minutos
+        const breakHoras = Math.floor(tiempoBreak / 60);
+        const breakMinutos = tiempoBreak % 60;
+
         const descripcion =
-            `Ingreso: ${ingreso}.\nBreak inicio: ${breakEntrada} \nBreak Fin: ${breakSalida}.\nTiempo total de break: ${tiempoBreak.toFixed(2)}.\nHora de salida: ${salida}.\nTotal de horas: ${horasTotales}.`;
+            `Ingreso: ${ingreso}.\nBreak inicio: ${breakEntrada} \nBreak Fin: ${breakSalida}.\nTiempo total de break: ${breakHoras} horas y ${breakMinutos} minutos.\nHora de salida: ${salida}.\nTotal de horas: ${horasTotales}.`;
 
         const $descripcion = document.getElementById("descripcion");
         $descripcion.value = descripcion; 

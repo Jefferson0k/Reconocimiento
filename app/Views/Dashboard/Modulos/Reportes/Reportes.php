@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <style>
-    /* Cambiar el color de fondo de la fila cuando se hace clic */
 .fila-tabla:hover {
     background-color: lightgrey;
     cursor: pointer;
@@ -123,7 +122,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 <tbody>
                 </tbody>
             </table>
-            <!-- End Table with stripped rows -->
         </div>
     </div>
 </div>
