@@ -68,21 +68,54 @@ class Horario extends BaseController{
         return $Turnos ? $Turnos['Turno'] : 'Sucursal desconocida';
     }
     public function store(){
-        $data = $this->request->getJSON();    
+        $data = $this->request->getJSON();
+
         if (!empty($data)) {
             $session = session();
             $userId = $session->get('id');
             if (!$userId) {
                 return $this->failUnauthorized('Usuario no autenticado.');
             }
+
+            // Validar horarios
+            $horaIngreso = strtotime($data->ingreso);
+            $horaSalida = strtotime($data->salida);
+            $horaBreakInicio = strtotime($data->break_entrada);
+            $horaBreakFin = strtotime($data->break_salida);
+
+            // Validaciones lógicas
+            if ($horaIngreso >= $horaSalida) {
+                return $this->failValidationError('La hora de entrada debe ser anterior a la hora de salida.');
+            }
+
+            if ($horaBreakInicio <= $horaIngreso || $horaBreakInicio >= $horaSalida) {
+                return $this->failValidationError('La hora de inicio del break debe estar dentro del turno laboral.');
+            }
+
+            if ($horaBreakFin <= $horaBreakInicio || $horaBreakFin > $horaSalida) {
+                return $this->failValidationError('La hora de fin del break debe ser después del inicio del break y antes de la hora de salida.');
+            }
+
+            // Calcular horas trabajadas
+            $horasTrabajadas = ($horaSalida - $horaIngreso - ($horaBreakFin - $horaBreakInicio)) / 3600;
+
+            if ($horasTrabajadas <= 0 || $horasTrabajadas > 8) {
+                return $this->failValidationError('El total de horas trabajadas debe ser mayor a 0 y no exceder las 8 horas.');
+            }
+
+            // Asignar el ID de usuario
             $data->id_user = $userId;
+
+            // Insertar los datos
             $model = new HorarioModelo();
-            $model->insert((array)$data);    
+            $model->insert((array)$data);
+
             return $this->respondCreated(['success' => true]);
         } else {
             return $this->failValidationError('No se recibieron datos para insertar.');
         }
-    }        
+    }
+    
     public function show($id, $id_sucursal): ResponseInterface {
         $session = session();
         $userId = $session->get('id');

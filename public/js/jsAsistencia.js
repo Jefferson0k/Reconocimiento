@@ -179,7 +179,7 @@ function listar(idSucursal, fecha_inicio, fecha_fin) {
                     );
                 });
             } else {
-                $('#tblTGenerales tbody').append('<tr><td colspan="9" class="text-center">No se encontraron registros.</td></tr>');
+                //$('#tblTGenerales tbody').append('<tr><td colspan="9" class="text-center">No se encontraron registros.</td></tr>');
             }
 
             // Inicializar DataTables sin botones

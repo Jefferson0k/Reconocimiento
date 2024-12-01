@@ -18,6 +18,7 @@
 <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 <!-- / Layout wrapper -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->

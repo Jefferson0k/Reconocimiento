@@ -153,8 +153,15 @@ function buscarHorarios(idSucursal) {
         dataType: 'json',
         success: function(data) {
             $.each(data.data, function(index, item) {
-                // Crear el texto de la opción incluyendo ingreso, salida e id_Turnos
-                var optionText = item.ingreso + ' - ' + item.salida + ' - ' + item.id_Turnos.Turno + ' - ' + item.totalHoras;
+                // Convertir las horas a formato AM/PM usando moment.js
+                var ingresoAMPM = moment(item.ingreso, 'HH:mm:ss').format('hh:mm A');
+                var salidaAMPM = moment(item.salida, 'HH:mm:ss').format('hh:mm A');
+                var breakEntradaAMPM = moment(item.break_entrada, 'HH:mm:ss').format('hh:mm A');
+                var breakSalidaAMPM = moment(item.break_salida, 'HH:mm:ss').format('hh:mm A');
+                var totalHorasAMPM = moment(item.totalHoras, 'HH:mm:ss').format('hh:mm A');
+
+                // Crear el texto de la opción incluyendo los horarios en formato AM/PM
+                var optionText = ingresoAMPM + ' - ' + salidaAMPM + ' - ' + item.id_Turnos.Turno + ' - ' + totalHorasAMPM;
                 $('#id_horario').append($('<option>', {
                     value: item.id,
                     text: optionText
